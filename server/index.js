@@ -25,13 +25,11 @@ const typeDefs = `type Query {
   }
   type Channel {
     id: ID
-    type: Int!,
     name: String!,
     topic: String,
     messages: [Message]
   }
   type Message {
-    type: Int!,
     content: String!,
     channel_id: String!,
     author: Author!
@@ -40,9 +38,15 @@ const typeDefs = `type Query {
     id: ID!,
     username: String!
   }
+  input AuthorInput {
+    id: ID!,
+    username: String!
+  }
+
   type Mutation {
-    createChannel(type: Int!, name: String!, topic: String): Channel!,
+    createChannel(name: String!, topic: String): Channel!,
     deleteChannel(id: ID!): String
+    sendMessage(content: String!, channel_id: String!, author: AuthorInput!): Message
   }`;
 const resolvers = {
   Query: {
@@ -53,9 +57,8 @@ const resolvers = {
     },
   },
   Mutation: {
-    createChannel: async (_, { type, name, topic }) => {
+    createChannel: async (_, { name, topic }) => {
       const newChannel = new channel({
-        type,
         name,
         topic,
       });
@@ -65,6 +68,23 @@ const resolvers = {
     deleteChannel: async (_, { id }) => {
       await channel.findByIdAndRemove(id);
       return "Channel deleted";
+    },
+    sendMessage: async (_, { content, channel_id, author }) => {
+      channel.findOne({ channel_id: channel_id }, (err, channel) => {
+        if (err) throw new Error(err);
+        if (!channel) return "Empty";
+        const newMessage = {
+          content: content,
+          channel_id: channel_id,
+          author: {
+            id: author.id,
+            username: author.username,
+          },
+        };
+        channel.messages.push(newMessage);
+        channel.save();
+        return newMessage;
+      });
     },
   },
 };
