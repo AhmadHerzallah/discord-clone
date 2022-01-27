@@ -6,7 +6,6 @@ const channelSchema = mongoose.Schema({
   topic: String,
   messages: [
     {
-      type: Number,
       content: String,
       channel_id: String,
       author: {

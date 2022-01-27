@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
 const messageSchema = mongoose.Schema({
-  type: Number,
   content: String,
   channel_id: String,
   author: {
