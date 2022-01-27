@@ -1,6 +1,9 @@
 # discord-clone
-## A discord clone using MERN stack
+
+## A discord clone using MERNQ stack
+
 ---
+
 ## How to set up and use
 
 1. Clone the repository and run either `yarn install` or `npm install`
